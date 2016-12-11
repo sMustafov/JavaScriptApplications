@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>List Town</title>
+    <script src="https://unpkg.com/react/dist/react.js"></script>
+    <script src="https://unpkg.com/react-dom/dist/react-dom.js"></script>
+    <script src="https://unpkg.com/babel-standalone"></script>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        let PersonForm = React.createClass({
+            getInitialState: function() {
+                let cities = this.props.cities;
+                if (cities == undefined) {
+                    cities = "";
+                }
+                return { cities };
+            },
+            handleNameChange(event) {
+                this.setState({cities: event.target.value});
+            },
+            handleFormSubmit(event) {
+                if (this.props.onsubmit)
+                    this.props.onsubmit(this.state);
+                event.preventDefault();
+            },
+            render: function() {
+                return <form onSubmit={this.handleFormSubmit}>
+                    <label>
+                        <input type="text" value={this.state.cities}
+                               onChange={this.handleNameChange} />
+                    </label>
+                    <input type="submit" value="Submit" />
+                </form>
+            }
+        });
+
+        ReactDOM.render(
+                <div>
+                    <PersonForm onsubmit={editPerson} />
+                </div>,
+                document.getElementById('root'));
+
+        function editPerson(formData) {
+            let List = React.createClass({
+                render: function() {
+                    let items = [];
+                    for (let i in this.props.items)
+                        items.push(<li key={i}>{this.props.items[i]}</li>);
+                    return <ul>{items}</ul>;
+                }
+            });
+            let towns = formData['cities'].split(',');
+            let list = <List items={towns} />;
+
+            ReactDOM.render(list, document.getElementById('root'));
+        }
+    </script>
+</body>
+</html>
